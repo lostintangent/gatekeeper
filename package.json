@@ -11,6 +11,10 @@
 	"categories": [
 		"Other"
 	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/vsls-contrib/bouncer.git"
+	},
 	"activationEvents": [
 		"onCommand:liveshare.start",
 		"onCommand:liveshare.startFromActivityBar",

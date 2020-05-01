@@ -20,12 +20,19 @@ export async function activate(context: vscode.ExtensionContext) {
         return removeUser(peer.peerNumber);
       }
 
+      // If the incoming user is from the same domain
+      // as the host, then they'll immediately allowed.
+      if (selfDomain.localeCompare(emailDomain) === 0) {
+        return;
+      }
+
       const allowedDomains: string[] = vscode.workspace
         .getConfiguration("liveshare")
         .get("allowedDomains", []);
 
-      const isSameDomain = selfDomain.localeCompare(emailDomain) !== 0;
-      if (!isSameDomain || !allowedDomains.includes(emailDomain)) {
+      // If the incoming user is from a different domain,
+      // which hasn't been whitelisted, then remove them.
+      if (!allowedDomains.includes(emailDomain)) {
         removeUser(peer.peerNumber);
       }
     });

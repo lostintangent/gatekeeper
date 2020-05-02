@@ -2,8 +2,14 @@ import * as vscode from "vscode";
 import * as vsls from "vsls";
 
 export async function activate(context: vscode.ExtensionContext) {
-  const api = await vsls.getApi();
-  api?.onDidChangePeers((e) => {
+  // This extension takes a hard depedency on
+  // Live Share, so it will always be available.
+  const api = (await vsls.getApi())!;
+
+  // Wait for any guests to attempt to join
+  // a collaboration session, in order to 
+  // determine if they're allowed in or not.
+  api.onDidChangePeers((e) => {
     e.added.forEach((peer) => {
       // If the current user doesn't have an e-mail address, then
       // there's no point in us trying to match it against guests.
@@ -21,7 +27,7 @@ export async function activate(context: vscode.ExtensionContext) {
       }
 
       // If the incoming user is from the same domain
-      // as the host, then they'll immediately allowed.
+      // as the host, then they're immediately allowed.
       if (selfDomain.localeCompare(emailDomain) === 0) {
         return;
       }

@@ -1,6 +1,6 @@
 {
-  "name": "bouncer",
-  "displayName": "Live Share Bouncer",
+  "name": "gatekeeper",
+  "displayName": "Live Share Gatekeeper",
   "publisher": "vsls-contrib",
   "description": "VS Code extension to automatically block unwanted Live Share guests.",
   "version": "0.0.1",
@@ -13,7 +13,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/vsls-contrib/bouncer.git"
+    "url": "https://github.com/vsls-contrib/gatekeeper.git"
   },
   "activationEvents": [
     "onCommand:liveshare.start",
@@ -27,7 +27,7 @@
   "main": "./out/extension.js",
   "contributes": {
     "configuration": {
-      "title": "Live Share Bouncer Configuration",
+      "title": "Live Share Gatekeeper Configuration",
       "properties": {
         "liveshare.allowedDomains": {
           "type": "array",

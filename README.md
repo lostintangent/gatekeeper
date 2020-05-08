@@ -1,6 +1,6 @@
-# Live Share Bouncer 💂
+# Live Share Gatekeeper 💂
 
-Live Share Bouncer allows you to prevent Live Share guests from joining a collaboration session that isn't a member of the same domain/AAD tenant. This prevents anonymous users, users outside your organization, or users outside of a specified set of domains (e.g. `microsoft.com`) from being able to collaborating with you, regardless if they got access to the session URL.
+Live Share Gatekeeper allows you to prevent Live Share guests from joining a collaboration session that isn't a member of the same domain/AAD tenant. This prevents anonymous users, users outside your organization, or users outside of a specified set of domains (e.g. `microsoft.com`) from being able to collaborating with you, regardless if they got access to the session URL.
 
 ## Getting Started
 

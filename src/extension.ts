@@ -1,13 +1,18 @@
 import * as vscode from "vscode";
 import * as vsls from "vsls";
 
+const EXTENSION_NAME = "liveshare";
 export async function activate(context: vscode.ExtensionContext) {
+  // Ensure the neccessary settings are
+  // re-enforced for the end-user.
+  await enforceSettings();
+
   // This extension takes a hard depedency on
   // Live Share, so it will always be available.
   const api = (await vsls.getApi())!;
 
   // Wait for any guests to attempt to join
-  // a collaboration session, in order to 
+  // a collaboration session, in order to
   // determine if they're allowed in or not.
   api.onDidChangePeers((e) => {
     e.added.forEach((peer) => {
@@ -33,7 +38,7 @@ export async function activate(context: vscode.ExtensionContext) {
       }
 
       const allowedDomains: string[] = vscode.workspace
-        .getConfiguration("liveshare")
+        .getConfiguration(EXTENSION_NAME)
         .get("allowedDomains", []);
 
       // If the incoming user is from a different domain,
@@ -46,7 +51,22 @@ export async function activate(context: vscode.ExtensionContext) {
 }
 
 function removeUser(peerNumber: number) {
-  vscode.commands.executeCommand("liveshare.removeParticipant", {
+  vscode.commands.executeCommand(`${EXTENSION_NAME}.removeParticipant`, {
     sessionId: peerNumber,
   });
+}
+
+const SETTINGS = [
+  "allowGuestDebugControl",
+  "allowGuestTaskControl",
+  "autoShareServers"
+];
+
+async function enforceSettings() {
+  const config = vscode.workspace.getConfiguration(EXTENSION_NAME);
+  return Promise.all(
+    SETTINGS.map((setting) =>
+      config.update(setting, false, vscode.ConfigurationTarget.Global)
+    )
+  );
 }

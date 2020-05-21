@@ -8,17 +8,17 @@ Live Share Gatekeeper enforces a stricter "mode" of collaboration, for organizat
 1. Start a Live Share session
 1. If a guest tries to join the session, that's either anonymous, or is authenticated with a different domain than you (e.g. `@microsoft.com`), they will be immediately blocked
 
-If you want to allow guests to join from a set of custom domains, then set the `Live Share: Allowed Domains` setting as appropriate.
+If needed, you can then easily [automate](#automating-installation) the installation of this extension on every developer's machine in your organization, in order to provide a centrally-managed experience.
 
 ## Automating Installation
 
-If your organization is already using a systems management solution (e.g. [Microsoft System Center Configuration Manager](https://en.wikipedia.org/wiki/Microsoft_System_Center_Configuration_Manager), then you can ensure this extension is automatically installed on developer's machines, by adding the following shell script to your management configuration:
+If your organization is using a systems management solution (e.g. [Microsoft System Center Configuration Manager](https://en.wikipedia.org/wiki/Microsoft_System_Center_Configuration_Manager)), then you can ensure the Gatekeeper extension is automatically installed on developer's machines, by adding the following command to your managed startup scripts:
 
 ```shell
 code --install-extension vsls-contrib.gatekeeper
 ```
 
-> Note: If your developers are using VS Code Insiders, then simply adjust the above script to use `code-insiders` instead of `code`.
+> If your developers are using VS Code Insiders, then simply adjust the above script to reference `code-insiders` instead of `code`.
 
 This will ensure that developer's always have the latest version of Gatekeeper installed. Additionally, since Gatekeeper takes a dependency on the Live Share extension as well, you can simply install Gatekeeper, which will take care of installing and configuring everything that developer's need to start securely collaborating!
 
@@ -30,7 +30,7 @@ In addition to rejecting anonymous/external guests, this extension also enforces
 - `Liveshare: Allow Guest Task Control`
 - `Liveshare: Auto Share Servers`
 
-> Note: These settings are automatically set to `false` every time the user runs VS Code. However, the user can still set them back to `true` within a VS Code session.
+> These settings are automatically set to `false` every time the user runs VS Code. However, the user can still set them back to `true` within a VS Code session.
 
 ## Contributed Settings
 

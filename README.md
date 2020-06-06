@@ -5,7 +5,7 @@ Live Share Gatekeeper enforces a stricter "mode" of collaboration, for organizat
 ## Getting Started
 
 1. Install the `Live Share Gatekeeper` extension
-1. Reload VS Code
+1. Reload Visual Studio Code
 1. Start a Live Share session
 1. If a guest tries to join the session, that's either anonymous, or is authenticated with a different domain than you (e.g. `@microsoft.com`), they will be immediately blocked
 

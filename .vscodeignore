@@ -3,5 +3,4 @@ src/**
 .gitignore
 **/tslint.json
 **/*.map
-
 **/*.ts

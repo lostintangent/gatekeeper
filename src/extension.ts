@@ -18,7 +18,9 @@ export async function activate(context: vscode.ExtensionContext) {
 class TestPolicyProvider implements vsls.PolicyProvider {
 
   policies: vsls.Policy[] = [
-    new GenericPolicy(vsls.SettingKey.AllowGuestDebugControl, false)
+    new GenericPolicy(vsls.SettingKey.AllowGuestDebugControl, false),
+    new GenericPolicy(vsls.SettingKey.AllowGuestTaskControl, false),
+    new GenericPolicy(vsls.SettingKey.AutoShareServers, false)
   ];
 }
 

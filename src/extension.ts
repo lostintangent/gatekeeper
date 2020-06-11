@@ -19,14 +19,16 @@ class TestPolicyProvider implements vsls.PolicyProvider {
 
   policies: vsls.Policy[] = [
     new GenericPolicy(vsls.SettingKey.AllowGuestDebugControl, false),
-    new GenericPolicy(vsls.SettingKey.AllowGuestTaskControl, false),
-    new GenericPolicy(vsls.SettingKey.AutoShareServers, false)
+    new GenericPolicy(vsls.SettingKey.AllowGuestTaskControl, false, true),
+    new GenericPolicy(vsls.SettingKey.AutoShareServers, false, true),
+    new GenericPolicy(vsls.SettingKey.AnonymousGuestApproval, "reject"),
+    new GenericPolicy(vsls.SettingKey.ConnectionMode, "direct")
   ];
 }
 
 class GenericPolicy implements vsls.Policy {
 
-  constructor(settingKey: vsls.SettingKey, value: any, isUserLevel: boolean = true) {
+  constructor(settingKey: vsls.SettingKey, value: any, isUserLevel: boolean = false) {
     this.isUserLevel = isUserLevel;
     this.value = value;
     this.settingKey = settingKey;

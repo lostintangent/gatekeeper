@@ -2,27 +2,24 @@ import * as vscode from "vscode";
 import * as vsls from "vsls";
 
 export async function activate(context: vscode.ExtensionContext) {
-
-  // This extension takes a hard depedency on
-  // Live Share, so it will always be available.
   const api = (await vsls.getApi())!;
 
-  // Wait for any guests to attempt to join
-  // a collaboration session, in order to
-  // determine if they're allowed in or not.
-
   let policyProvider = new TestPolicyProvider();
-  api.registerPolicyProvider("Test Policy Provider", policyProvider);
+  let handler = api.registerPolicyProvider("Strict Policy Provider", policyProvider);
+
+  await vscode.window.showErrorMessage("Hi! This message comes from gatekeeper extension. Close the notification to turn my policies off.");
+  handler?.dispose();
 }
 
 class TestPolicyProvider implements vsls.PolicyProvider {
 
   policies: vsls.Policy[] = [
+    new GenericPolicy(vsls.SettingKey.AnonymousGuestApproval, "accept"),
     new GenericPolicy(vsls.SettingKey.AllowGuestDebugControl, false),
-    new GenericPolicy(vsls.SettingKey.AllowGuestTaskControl, false, true),
-    new GenericPolicy(vsls.SettingKey.AutoShareServers, false, true),
-    new GenericPolicy(vsls.SettingKey.AnonymousGuestApproval, "reject"),
-    new GenericPolicy(vsls.SettingKey.ConnectionMode, "direct")
+    new GenericPolicy(vsls.SettingKey.AllowedDomains, [
+      "microsoft.com",
+      "github.com"
+    ]),
   ];
 }
 

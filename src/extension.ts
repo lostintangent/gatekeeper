@@ -14,13 +14,17 @@ export async function activate(context: vscode.ExtensionContext) {
 class TestPolicyProvider implements vsls.PolicyProvider {
 
   policies: vsls.Policy[] = [
-    new GenericPolicy(vsls.PolicyTitle.AnonymousGuestApproval, "accept"),
-    new GenericPolicy(vsls.PolicyTitle.AllowGuestDebugControl, false),
+    new GenericPolicy(vsls.PolicyTitle.AnonymousGuestApproval, "reject"),
+    new GenericPolicy(vsls.PolicyTitle.ConnectionMode, "direct"),
+    new GenericPolicy(vsls.PolicyTitle.AutoShareServers, false),
+    new GenericPolicy(vsls.PolicyTitle.ReadOnlyTerminals, true),
     new GenericPolicy(vsls.PolicyTitle.AllowedDomains, [
       "microsoft.com",
       "github.com"
     ]),
-    new GenericPolicy(vsls.PolicyTitle.ReadOnlyTerminals, true)
+
+    new GenericPolicy(vsls.PolicyTitle.AllowGuestDebugControl, false, true),
+    new GenericPolicy(vsls.PolicyTitle.AllowGuestTaskControl, false, true)
   ];
 }
 

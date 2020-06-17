@@ -20,7 +20,7 @@ class TestPolicyProvider implements vsls.PolicyProvider {
       "microsoft.com",
       "github.com"
     ]),
-    new GenericPolicy(vsls.PolicyTitle.ReadOnlyTerminal, true)
+    new GenericPolicy(vsls.PolicyTitle.ReadOnlyTerminals, true)
   ];
 }
 

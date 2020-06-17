@@ -6,16 +6,13 @@ export async function activate(context: vscode.ExtensionContext) {
 
   let policyProvider = new TestPolicyProvider();
   api.registerPolicyProvider("Strict Policy Provider", policyProvider);
-
-  // await vscode.window.showErrorMessage("Hi! This message comes from gatekeeper extension. Close the notification to turn my policies off.");
-  // handler?.dispose();
 }
 
 class TestPolicyProvider implements vsls.PolicyProvider {
 
   policies: vsls.Policy[] = [
     new GenericPolicy(vsls.PolicyTitle.AnonymousGuestApproval, "reject"),
-    new GenericPolicy(vsls.PolicyTitle.ConnectionMode, "direct"),
+    new GenericPolicy(vsls.PolicyTitle.ConnectionMode, "relay"),
     new GenericPolicy(vsls.PolicyTitle.AutoShareServers, false),
     new GenericPolicy(vsls.PolicyTitle.ReadOnlyTerminals, true),
     new GenericPolicy(vsls.PolicyTitle.AllowedDomains, [

@@ -52,9 +52,11 @@
   "devDependencies": {
     "typescript": "^3.1.4",
     "vscode": "^1.1.25",
+    "@types/js-yaml": "^3.12.4",
     "@types/node": "^8.10.25"
   },
   "dependencies": {
+    "js-yaml": "^3.14.0",
     "vsls": "^1.0.1830"
   }
 }

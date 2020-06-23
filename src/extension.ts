@@ -12,32 +12,32 @@ class TestPolicyProvider implements vsls.PolicyProvider {
 
   providePolicies(): vsls.Policy[] {
     return [
-      new GenericPolicy(vsls.PolicyTitle.AnonymousGuestApproval, "reject"),
-      new GenericPolicy(vsls.PolicyTitle.ConnectionMode, "relay"),
-      new GenericPolicy(vsls.PolicyTitle.AutoShareServers, false),
-      new GenericPolicy(vsls.PolicyTitle.AllowReadWriteTerminals, false),
-      new GenericPolicy(vsls.PolicyTitle.AllowedDomains, [
+      new GenericPolicy(vsls.PolicySetting.AnonymousGuestApproval, "reject"),
+      new GenericPolicy(vsls.PolicySetting.ConnectionMode, "relay"),
+      new GenericPolicy(vsls.PolicySetting.AutoShareServers, false),
+      new GenericPolicy(vsls.PolicySetting.AllowReadWriteTerminals, false),
+      new GenericPolicy(vsls.PolicySetting.AllowedDomains, [
         "microsoft.com",
         "github.com"
       ]),
   
-      new GenericPolicy(vsls.PolicyTitle.AllowGuestDebugControl, false, true),
-      new GenericPolicy(vsls.PolicyTitle.AllowGuestTaskControl, false, true)
+      new GenericPolicy(vsls.PolicySetting.AllowGuestDebugControl, false, true),
+      new GenericPolicy(vsls.PolicySetting.AllowGuestTaskControl, false, true)
     ];
   }
 }
 
 class GenericPolicy implements vsls.Policy {
 
-  constructor(policyTitle: vsls.PolicyTitle, value: any, isUserLevel: boolean = false) {
-    this.isUserLevel = isUserLevel;
+  constructor(policyStting: vsls.PolicySetting, value: any, isEnforced: boolean = false) {
+    this.isEnforced = isEnforced;
     this.value = value;
-    this.policyTitle = policyTitle;
+    this.policySetting = policyStting;
   }
 
-  isUserLevel: boolean;
+  isEnforced: boolean;
   
   value: any;
   
-  policyTitle: vsls.PolicyTitle;
+  policySetting: vsls.PolicySetting;
 }

@@ -15,7 +15,7 @@ export default class ActivityLog {
     }
 
     public log(entry: any): void {
-        this.outputFile.append(`${yaml.safeDump([entry])}${os.EOL}`);
+        this.outputFile.append(`${yaml.safeDump([entry], { skipInvalid: true })}${os.EOL}`);
     }
 
 }

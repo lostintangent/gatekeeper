@@ -14,7 +14,9 @@ export async function activate(context: vscode.ExtensionContext) {
 
   const activityLog = new ActivityLog();
   await activityLog.openAsync();
-  api.onActivity?(activity => activityLog.log(activity));
+  if (api.onActivity) {
+    api.onActivity((activity: vsls.Activity) => activityLog.log(activity));
+  }
 
   // Wait for any guests to attempt to join
   // a collaboration session, in order to

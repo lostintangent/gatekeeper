@@ -1,6 +1,6 @@
 # Live Share Gatekeeper 💂
 
-Live Share Gatekeeper enforces a stricter "mode" of collaboration, for organizations that want the benefits of real-time interaction, while respecting their security/compliance policies. In particular, this extensions allow you to prevent Live Share guests from joining a collaboration session that aren't members of the same domain/AAD tenant. This prevents anonymous users, users outside your organization, or users outside of a specified set of domains (e.g. `microsoft.com`) from being able to collaborating with you, regardless if they got access to the session URL. Additionally, it automatically enforces a set of policies, so that user's can't accidentally share unintended resources (e.g. read/write terminals).
+Live Share Gatekeeper enforces a stricter "mode" of collaboration, for organizations that want the benefits of real-time interaction, while respecting their security/compliance policies. In particular, this extensions allow you to prevent Live Share guests from joining a collaboration session that aren't members of the same domain/AAD tenant. This prevents anonymous users, users outside your organization, or users outside of a specified set of domains (e.g. `microsoft.com`) from being able to collaborating with you, regardless if they got access to the session URL. Additionally, it automatically enforces a set of policies, so that user's can't accidentally share unintended resources (e.g. read/write terminals), and automatically logs all session activity for future auditing.
 
 ## Getting Started
 
@@ -9,6 +9,7 @@ Live Share Gatekeeper enforces a stricter "mode" of collaboration, for organizat
 1. Start a Live Share session
 1. If a guest tries to join the session, that's either anonymous, or is authenticated with a different domain than you (e.g. `@microsoft.com`), they will be immediately blocked
 1. _(Optional)_ [Explicitly configure](#configuring-allowed-domains) the set of allowed domains to have even greater control
+1. _(Optional)_ View the session [activity logs](#activity-logs) to see exactly what occurred within the collaboration
 
 If needed, you can then easily [automate](#automating-installation) the installation of this extension on every developer's machine in your organization, in order to provide a centrally-managed experience.
 
@@ -39,6 +40,16 @@ By default, Gatekeeper restricts collaboration within the same domain that the h
 When a set of allowed domains is configured, then the host is required to authenticate with Live Share using one of those domains. If they aren't, then they will receive the following error when they attempt to share their workspace:
 
 <img width="500px" src="https://user-images.githubusercontent.com/116461/86175551-66493f00-bad8-11ea-9f22-9fe90c478da9.png" />
+
+## Activity Logs
+
+In addition to enforcing policy, the Gatekeeper extension also writes out activity logs for all Live Share sessions, which allows you to view and audit the collaboration details that occur within your organization. These logs are written as YAML files to the `$TMP/VSLiveShareActivityLogs` directory, on the machine of the hosting developer (the person who shared their workspace). The following events are will be automatically captured as part of these activity logs:
+
+- Session started/ended/joined
+- Guest joined/left
+- File opened/saved
+- Debug session started/stopped/joined
+- Terminal shared/unshared/access changed
 
 ## Enforced Settings
 

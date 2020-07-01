@@ -3,16 +3,32 @@ import * as os from "os";
 import * as path from "path";
 import * as vscode from "vscode";
 import * as vsls from "vsls";
+import ActivityLog from "./activityLog";
 
 const EXTENSION_NAME = "liveshare";
 const POLICY_FILE = "liveshare-policy.json";
 
+const SETTINGS = [
+  "allowGuestDebugControl",
+  "allowGuestTaskControl",
+  "autoShareServers",
+];
+
+async function enforceSettings() {
+  const config = vscode.workspace.getConfiguration(EXTENSION_NAME);
+  return Promise.all(
+    SETTINGS.map((setting) =>
+      config.update(setting, false, vscode.ConfigurationTarget.Global)
+    )
+  );
+}
+
 export async function activate(context: vscode.ExtensionContext) {
-  // Ensure the neccessary settings are
+  // Ensure the necessary settings are
   // re-enforced for the end-user.
   await enforceSettings();
 
-  // This extension takes a hard depedency on
+  // This extension takes a hard dependency on
   // Live Share, so it will always be available.
   const api = (await vsls.getApi())!;
 
@@ -76,21 +92,12 @@ export async function activate(context: vscode.ExtensionContext) {
       }
     });
   });
-}
 
-const SETTINGS = [
-  "allowGuestDebugControl",
-  "allowGuestTaskControl",
-  "autoShareServers",
-];
-
-async function enforceSettings() {
-  const config = vscode.workspace.getConfiguration(EXTENSION_NAME);
-  return Promise.all(
-    SETTINGS.map((setting) =>
-      config.update(setting, false, vscode.ConfigurationTarget.Global)
-    )
-  );
+  const activityLog = new ActivityLog();
+  await activityLog.openAsync();
+  if (api.onActivity) {
+    api.onActivity((activity: vsls.Activity) => activityLog.log(activity));
+  }
 }
 
 function getAllowedDomains(): string[] {

@@ -13,8 +13,8 @@ export async function activate(context: vscode.ExtensionContext) {
   // Live Share, so it will always be available.
   const api = (await vsls.getApi())!;
 
-  let policyProvider = new TestPolicyProvider();
-  api.registerPolicyProvider("Sample Provider", policyProvider);
+  let policyProvider = new GatekeeperPolicyProvider();
+  api.registerPolicyProvider("Gatekeeper Provider", policyProvider);
 
   const activityLog = new ActivityLog();
   await activityLog.openAsync();
@@ -23,7 +23,7 @@ export async function activate(context: vscode.ExtensionContext) {
   }
 }
 
-class TestPolicyProvider implements vsls.PolicyProvider {
+class GatekeeperPolicyProvider implements vsls.PolicyProvider {
   providePolicies(): vsls.Policy[] {
     return [
       new GenericPolicy(vsls.PolicySetting.AnonymousGuestApproval, "reject"),

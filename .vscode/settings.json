@@ -8,5 +8,6 @@
     "typescript.tsc.autoDetect": "off",
     "extensions.ignoreRecommendations": true,
     "files.autoSave": "off",
-    "debug.allowBreakpointsEverywhere": true
+    "debug.allowBreakpointsEverywhere": true,
+    "editor.formatOnSave": true
 }

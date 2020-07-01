@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import * as vsls from "vsls";
+import ActivityLog from './activityLog';
 
 const EXTENSION_NAME = "liveshare";
 export async function activate(context: vscode.ExtensionContext) {
@@ -10,6 +11,12 @@ export async function activate(context: vscode.ExtensionContext) {
   // This extension takes a hard depedency on
   // Live Share, so it will always be available.
   const api = (await vsls.getApi())!;
+
+  const activityLog = new ActivityLog();
+  await activityLog.openAsync();
+  if (api.onActivity) {
+    api.onActivity((activity: vsls.Activity) => activityLog.log(activity));
+  }
 
   // Wait for any guests to attempt to join
   // a collaboration session, in order to

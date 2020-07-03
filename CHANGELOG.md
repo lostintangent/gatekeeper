@@ -1,6 +1,9 @@
-## v0.0.3 (07/04/2020)
+## v0.0.4 (07/03/2020)
 
 - Introduced a activity log file for auditing collaboration sessions
+
+## v0.0.3 (06/28/2020)
+
 - Added support for restricting **sharing** to only allowed domains
 - Added support for defining the list of allowed domains via a config file (in addition to the VS Code setting)
 

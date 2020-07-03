@@ -96,7 +96,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const activityLog = new ActivityLog();
   await activityLog.openAsync();
   if (api.onActivity) {
-    api.onActivity((activity: vsls.Activity) => activityLog.log(activity));
+    api.onActivity(activityLog.log.bind(activityLog));
   }
 }
 

@@ -1,4 +1,4 @@
-## v0.0.3 (06/30/2020)
+## v0.0.3 (07/04/2020)
 
 - Introduced a activity log file for auditing collaboration sessions
 - Added support for restricting **sharing** to only allowed domains

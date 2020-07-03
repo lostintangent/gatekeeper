@@ -43,7 +43,7 @@ When a set of allowed domains is configured, then the host is required to authen
 
 ## Activity Logs
 
-In addition to enforcing policy, the Gatekeeper extension also writes out activity logs for all Live Share sessions, which allows you to view and audit the collaboration details that occur within your organization. These logs are written as YAML files to the `$TMP/VSLiveShareActivityLogs` directory, on the machine of the hosting developer (the person who shared their workspace). The following events are will be automatically captured as part of these activity logs:
+In addition to enforcing policy, the Gatekeeper extension also writes out activity logs for all Live Share sessions, which allows you to view and audit the collaboration details that occur within your organization. These logs are written as YAML files to the `$TMPDIR/VSLiveShareActivityLogs` directory, on the machine of the hosting developer (the person who shared their workspace). The following events are will be automatically captured as part of these activity logs:
 
 - Session started/ended/joined
 - Guest joined/left

@@ -29,13 +29,18 @@
     "configuration": {
       "title": "Live Share Gatekeeper Configuration",
       "properties": {
-        "liveshare.allowedDomains": {
+        "gatekeeper.allowedDomains": {
           "type": "array",
           "items": {
             "type": "string"
           },
           "default": [],
           "description": "Specifies the set of domains that guests are allowed be authenticated with."
+        },
+        "gatekeeper.allowReadWriteTerminals": {
+          "type": "boolean",
+          "default": false,
+          "description": "Specifies whether or not a read-write terminal can be instantiated within Live Share session."
         }
       }
     }

@@ -5,21 +5,54 @@ import * as vscode from "vscode";
 import * as vsls from "vsls";
 import ActivityLog from "./activityLog";
 
-const EXTENSION_NAME = "liveshare";
+const EXTENSION_NAME = "gatekeeper";
 const POLICY_FILE = "liveshare-policy.json";
+const POLICY_PROVIDER_NAME = "Gatekeeper Provider";
+
+let policyProviderHandler: vscode.Disposable | null;
+let policyProvider: vsls.PolicyProvider;
 
 export async function activate(context: vscode.ExtensionContext) {
   // This extension takes a hard dependency on
   // Live Share, so it will always be available.
   const api = (await vsls.getApi())!;
 
-  let policyProvider = new GatekeeperPolicyProvider();
-  api.registerPolicyProvider("Gatekeeper Provider", policyProvider);
+  policyProvider = new GatekeeperPolicyProvider();
+  policyProviderHandler = await api.registerPolicyProvider(
+    POLICY_PROVIDER_NAME,
+    policyProvider
+  );
+
+  vscode.workspace.onDidChangeConfiguration((event) =>
+    configurationChangeHandler(api, event)
+  );
 
   const activityLog = new ActivityLog();
   await activityLog.openAsync();
   if (api.onActivity) {
     api.onActivity((activity: vsls.Activity) => activityLog.log(activity));
+  }
+}
+
+async function configurationChangeHandler(
+  api: vsls.LiveShare,
+  event: vscode.ConfigurationChangeEvent
+) {
+  if (
+    event.affectsConfiguration(
+      `${EXTENSION_NAME}.${vsls.PolicySetting.AllowedDomains}`
+    ) ||
+    event.affectsConfiguration(
+      `${EXTENSION_NAME}.${vsls.PolicySetting.AllowReadWriteTerminals}`
+    )
+  ) {
+    // Re-register policy provider
+    // to set new setting values
+    policyProviderHandler?.dispose();
+    policyProviderHandler = await api.registerPolicyProvider(
+      POLICY_PROVIDER_NAME,
+      policyProvider
+    );
   }
 }
 
@@ -29,7 +62,12 @@ class GatekeeperPolicyProvider implements vsls.PolicyProvider {
       new GenericPolicy(vsls.PolicySetting.AnonymousGuestApproval, "reject"),
       new GenericPolicy(vsls.PolicySetting.ConnectionMode, "relay"),
       new GenericPolicy(vsls.PolicySetting.AutoShareServers, false),
-      new GenericPolicy(vsls.PolicySetting.AllowReadWriteTerminals, false),
+      new GenericPolicy(
+        vsls.PolicySetting.AllowReadWriteTerminals,
+        vscode.workspace
+          .getConfiguration(EXTENSION_NAME)
+          .get("allowReadWriteTerminals", false)
+      ),
       new GenericPolicy(
         vsls.PolicySetting.AllowedDomains,
         this.getAllowedDomains()

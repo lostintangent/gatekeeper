@@ -5,93 +5,27 @@ import * as vscode from "vscode";
 import * as vsls from "vsls";
 import ActivityLog from "./activityLog";
 
-const EXTENSION_NAME = "liveshare";
+const EXTENSION_NAME = "gatekeeper";
 const POLICY_FILE = "liveshare-policy.json";
+const POLICY_PROVIDER_NAME = "Gatekeeper Provider";
 
-const SETTINGS = [
-  "allowGuestDebugControl",
-  "allowGuestTaskControl",
-  "autoShareServers",
-];
-
-async function enforceSettings() {
-  const config = vscode.workspace.getConfiguration(EXTENSION_NAME);
-  return Promise.all(
-    SETTINGS.map((setting) =>
-      config.update(setting, false, vscode.ConfigurationTarget.Global)
-    )
-  );
-}
+let policyProviderHandler: vscode.Disposable | null;
+let policyProvider: vsls.PolicyProvider;
 
 export async function activate(context: vscode.ExtensionContext) {
-  // Ensure the necessary settings are
-  // re-enforced for the end-user.
-  await enforceSettings();
-
   // This extension takes a hard dependency on
   // Live Share, so it will always be available.
   const api = (await vsls.getApi())!;
 
-  // Wait to see if the host attempts to share,
-  // and is using a disallowed identity.
-  api.onDidChangeSession(async (e) => {
-    if (e.session) {
-      const allowedDomains = getAllowedDomains();
+  policyProvider = new GatekeeperPolicyProvider();
+  policyProviderHandler = await api.registerPolicyProvider(
+    POLICY_PROVIDER_NAME,
+    policyProvider
+  );
 
-      if (
-        allowedDomains.length > 0 &&
-        !allowedDomains.includes(getDomain(api.session)!)
-      ) {
-        const domains = allowedDomains.sort().join(", ");
-        api.end();
-
-        if (
-          await vscode.window.showErrorMessage(
-            `You need to sign into Live Share using one of the following allowed domains: ${domains}. Please sign-in and share again.`,
-            "Sign in"
-          )
-        ) {
-          await reSignIn();
-        }
-      }
-    }
-  });
-
-  // Wait for any guests to attempt to join
-  // a collaboration session, in order to
-  // determine if they're allowed in or not.
-  api.onDidChangePeers((e) => {
-    e.added.forEach((peer) => {
-      // If the current user doesn't have an e-mail address, then
-      // there's no point in us trying to match it against guests.
-      const selfDomain = getDomain(api.session);
-      if (!selfDomain) {
-        return;
-      }
-
-      // If the incoming user doesn't have an e-mail address,
-      // then immediately remove them, since anonymous/unknown
-      // guests aren't allowed, regardless of the host's settings.
-      const emailDomain = getDomain(peer);
-      if (!emailDomain) {
-        return removeUser(peer.peerNumber);
-      }
-
-      // If the incoming user is from the same domain
-      // as the host, then they're immediately allowed.
-      if (selfDomain.localeCompare(emailDomain) === 0) {
-        return;
-      }
-
-      const allowedDomains = getAllowedDomains();
-
-      // If the incoming user is from a different domain,
-      // which hasn't been whitelisted, then remove them.
-      if (!allowedDomains.includes(emailDomain)) {
-        removeUser(peer.peerNumber);
-      }
-    });
-  });
+  vscode.workspace.onDidChangeConfiguration((event) =>
+    configurationChangeHandler(api, event)
+  );
 
   const activityLog = new ActivityLog();
   await activityLog.openAsync();
@@ -100,40 +34,87 @@ export async function activate(context: vscode.ExtensionContext) {
   }
 }
 
-function getAllowedDomains(): string[] {
-  // Attempt to read the list of allowed domains
-  // from the central policy file (if it exists).
-  const filePath = path.join(os.homedir(), POLICY_FILE);
-  if (fs.existsSync(filePath)) {
-    const contents = fs.readFileSync(filePath, "utf8");
+async function configurationChangeHandler(
+  api: vsls.LiveShare,
+  event: vscode.ConfigurationChangeEvent
+) {
+  if (
+    event.affectsConfiguration(
+      `${EXTENSION_NAME}.${vsls.PolicySetting.AllowedDomains}`
+    ) ||
+    event.affectsConfiguration(
+      `${EXTENSION_NAME}.${vsls.PolicySetting.AllowReadWriteTerminals}`
+    )
+  ) {
+    // Re-register policy provider
+    // to set new setting values
+    policyProviderHandler?.dispose();
+    policyProviderHandler = await api.registerPolicyProvider(
+      POLICY_PROVIDER_NAME,
+      policyProvider
+    );
+  }
+}
 
-    try {
-      const policy = JSON.parse(contents);
-      if (policy.allowedDomains) {
-        return policy.allowedDomains;
-      }
-    } catch {
-      // The policy file wasn't valid JSON
-      // and so silently move on.
-    }
+class GatekeeperPolicyProvider implements vsls.PolicyProvider {
+  providePolicies(): vsls.Policy[] {
+    return [
+      new GenericPolicy(vsls.PolicySetting.AnonymousGuestApproval, "reject"),
+      new GenericPolicy(vsls.PolicySetting.ConnectionMode, "relay"),
+      new GenericPolicy(vsls.PolicySetting.AutoShareServers, false),
+      new GenericPolicy(
+        vsls.PolicySetting.AllowReadWriteTerminals,
+        vscode.workspace
+          .getConfiguration(EXTENSION_NAME)
+          .get("allowReadWriteTerminals", false)
+      ),
+      new GenericPolicy(
+        vsls.PolicySetting.AllowedDomains,
+        this.getAllowedDomains()
+      ),
+      new GenericPolicy(vsls.PolicySetting.AllowGuestDebugControl, false, true),
+      new GenericPolicy(vsls.PolicySetting.AllowGuestTaskControl, false, true),
+    ];
   }
 
-  return vscode.workspace
-    .getConfiguration(EXTENSION_NAME)
-    .get("allowedDomains", []);
+  getAllowedDomains(): string[] {
+    // Attempt to read the list of allowed domains
+    // from the central policy file (if it exists).
+    const filePath = path.join(os.homedir(), POLICY_FILE);
+    if (fs.existsSync(filePath)) {
+      const contents = fs.readFileSync(filePath, "utf8");
+
+      try {
+        const policy = JSON.parse(contents);
+        if (policy.allowedDomains) {
+          return policy.allowedDomains;
+        }
+      } catch {
+        // The policy file wasn't valid JSON
+        // and so silently move on.
+      }
+    }
+
+    return vscode.workspace
+      .getConfiguration(EXTENSION_NAME)
+      .get("allowedDomains", []);
+  }
 }
 
-function getDomain(peerOrSession: vsls.Peer | vsls.Session) {
-  return peerOrSession.user?.emailAddress?.split("@")[1];
-}
+class GenericPolicy implements vsls.Policy {
+  constructor(
+    policyStting: vsls.PolicySetting,
+    value: any,
+    isEnforced: boolean = false
+  ) {
+    this.isEnforced = isEnforced;
+    this.value = value;
+    this.policySetting = policyStting;
+  }
 
-function removeUser(peerNumber: number) {
-  vscode.commands.executeCommand(`${EXTENSION_NAME}.removeParticipant`, {
-    sessionId: peerNumber,
-  });
-}
+  isEnforced: boolean;
 
-async function reSignIn() {
-  await vscode.commands.executeCommand(`${EXTENSION_NAME}.signout`);
-  await vscode.commands.executeCommand(`${EXTENSION_NAME}.signInAndReload`);
+  value: any;
+
+  policySetting: vsls.PolicySetting;
 }

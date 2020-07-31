@@ -51,10 +51,13 @@ async function configurationChangeHandler(
     // Re-register policy provider
     // to set new setting values
     policyProviderHandler?.dispose();
-    policyProviderHandler = await api.registerPolicyProvider(
-      POLICY_PROVIDER_NAME,
-      policyProvider
-    );
+
+    if (api.registerPolicyProvider) {
+      policyProviderHandler = await api.registerPolicyProvider(
+        POLICY_PROVIDER_NAME,
+        policyProvider
+      );
+    }
   }
 }
 

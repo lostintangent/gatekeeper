@@ -17,15 +17,17 @@ export async function activate(context: vscode.ExtensionContext) {
   // Live Share, so it will always be available.
   const api = (await vsls.getApi())!;
 
-  policyProvider = new GatekeeperPolicyProvider();
-  policyProviderHandler = await api.registerPolicyProvider(
-    POLICY_PROVIDER_NAME,
-    policyProvider
-  );
+  if (api.registerPolicyProvider) {
+    policyProvider = new GatekeeperPolicyProvider();
+    policyProviderHandler = await api.registerPolicyProvider(
+      POLICY_PROVIDER_NAME,
+      policyProvider
+    );
 
-  vscode.workspace.onDidChangeConfiguration((event) =>
-    configurationChangeHandler(api, event)
-  );
+    vscode.workspace.onDidChangeConfiguration((event) =>
+      configurationChangeHandler(api, event)
+    );
+  }
 
   const activityLog = new ActivityLog();
   await activityLog.openAsync();

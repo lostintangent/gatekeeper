@@ -16,13 +16,7 @@
     "url": "https://github.com/vsls-contrib/gatekeeper.git"
   },
   "activationEvents": [
-    "onCommand:liveshare.start",
-    "onCommand:liveshare.startFromActivityBar",
-    "onCommand:liveshare.startReadOnly",
-    "onCommand:liveshare.startReadOnlyFromActivityBar",
-    "onCommand:liveshare.startReadOnlyFromSessionExplorer",
-    "onCommand:liveshare.inviteUserJoin",
-    "onCommand:liveshare.inviteUserJoinByEmail"
+    "*"
   ],
   "main": "./out/extension.js",
   "contributes": {

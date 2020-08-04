@@ -43,13 +43,24 @@ When a set of allowed domains is configured, then the host is required to authen
 
 ## Activity Logs
 
-In addition to enforcing policy, the Gatekeeper extension also writes out activity logs for all Live Share sessions, which allows you to view and audit the collaboration details that occur within your organization. These logs are written as YAML files to the `$TMPDIR/VSLiveShareActivityLogs` directory, on the machine of the hosting developer (the person who shared their workspace). The following events are will be automatically captured as part of these activity logs:
+In addition to enforcing policy, the Gatekeeper extension also writes out activity logs for all Live Share sessions, which allows you to view and audit the collaboration details that occur within your organization. These logs are written as [JSON lines](http://jsonlines.org/) files to the `$TMPDIR/VSLiveShareActivityLogs` directory, on the machine of the hosting developer (the person who shared their workspace). The following events are will be automatically captured as part of these activity logs:
 
 - Session started/ended/joined
 - Guest joined/left
 - File opened/saved
 - Debug session started/stopped/joined
 - Terminal shared/unshared/access changed
+
+## Policy Configuration File
+
+As mentioned [above](#configuring-allowed-domains), Gatekeeper supports a policy file that can specify the settings which are allowed by your organization. The following illustrates the complete set of policies that are supported by this file:
+
+```json
+{
+  "allowedDomains": ["foo.com", "bar.net"],
+  "connectionMode": "direct"
+}
+```
 
 ## Enforced Settings
 
@@ -58,5 +69,3 @@ In addition to rejecting anonymous/external guests, this extension also enforces
 - `Liveshare: Allow Guest Debug Control`
 - `Liveshare: Allow Guest Task Control`
 - `Liveshare: Auto Share Servers`
-
-> These settings are automatically set to `false` every time the user runs VS Code. However, the user can still set them back to `true` within a VS Code session.

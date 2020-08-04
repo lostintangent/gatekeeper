@@ -1,3 +1,9 @@
+## v0.0.5 (08/04/2020)
+
+- Updated the activity log to use JSON lines format instead of Yaml
+- Added support for enforced policies, as opposed to simply default settings values
+- Added support for defining the required connection mode in the policy config file
+
 ## v0.0.4 (07/03/2020)
 
 - Introduced a activity log file for auditing collaboration sessions

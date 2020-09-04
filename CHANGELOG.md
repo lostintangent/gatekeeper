@@ -1,3 +1,7 @@
+## v0.0.6 (09/04/2020)
+
+- Added support for the `LIVESHARE_POLICY_FILE` environment variable
+
 ## v0.0.5 (08/04/2020)
 
 - Updated the activity log to use JSON lines format instead of Yaml

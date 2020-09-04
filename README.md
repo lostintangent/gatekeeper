@@ -35,6 +35,8 @@ By default, Gatekeeper restricts collaboration within the same domain that the h
 }
 ```
 
+If you want to host the policy file in a custom location (e.g. a network share), simply set the `LIVESHARE_POLICY_FILE` environment variable to point at it, and Gatekeeper will use that path instead.
+
 > Alternatively, the set of allowed domains can be configured via the `Live Share > Allowed Domains` VS Code setting. When both sources exist, the contents of the config file will take precedence, which allows for a centrally managed solution.
 
 When a set of allowed domains is configured, then the host is required to authenticate with Live Share using one of those domains. If they aren't, then they will receive the following error when they attempt to share their workspace:

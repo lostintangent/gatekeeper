@@ -7,6 +7,7 @@ import { onPropertyChanged } from "./utils";
 
 const EXTENSION_NAME = "gatekeeper";
 
+const POLICY_FILE_ENV_VAR = "LIVESHARE_POLICY_FILE";
 const POLICY_FILE = "liveshare-policy.json";
 const POLICY_PROVIDER_NAME = "Gatekeeper";
 
@@ -79,7 +80,9 @@ class GatekeeperPolicyProvider implements vsls.PolicyProvider {
       return this._policyConfig;
     }
 
-    const filePath = path.join(os.homedir(), POLICY_FILE);
+    const filePath =
+      process.env[POLICY_FILE_ENV_VAR] || path.join(os.homedir(), POLICY_FILE);
+
     if (fs.existsSync(filePath)) {
       const contents = fs.readFileSync(filePath, "utf8");
 

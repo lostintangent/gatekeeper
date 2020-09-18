@@ -3,7 +3,7 @@
   "displayName": "Live Share Gatekeeper",
   "publisher": "vsls-contrib",
   "description": "VS Code extension to automatically block unwanted Live Share guests.",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "engines": {
     "vscode": "^1.40.0"
   },
@@ -51,9 +51,11 @@
   "devDependencies": {
     "typescript": "^3.1.4",
     "vscode": "^1.1.25",
-    "@types/node": "^8.10.25"
+    "@types/node": "^8.10.25",
+    "@types/node-fetch": "^2.5.7"
   },
   "dependencies": {
+    "node-fetch": "^2.6.1",
     "vsls": "^1.0.2590"
   }
 }

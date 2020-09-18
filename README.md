@@ -35,7 +35,7 @@ By default, Gatekeeper restricts collaboration within the same domain that the h
 }
 ```
 
-If you want to host the policy file in a custom location (e.g. a network share), simply set the `LIVESHARE_POLICY_FILE` environment variable to point at it, and Gatekeeper will use that path instead.
+If you want to host the policy file in a custom location (e.g. a network share), simply set the `LIVESHARE_POLICY_FILE` environment variable to point at it, and Gatekeeper will use that instead. Note that this environment variable can refer to either a local file, a network share, or an http(s)-based URL.
 
 > Alternatively, the set of allowed domains can be configured via the `Live Share > Allowed Domains` VS Code setting. When both sources exist, the contents of the config file will take precedence, which allows for a centrally managed solution.
 
@@ -45,7 +45,7 @@ When a set of allowed domains is configured, then the host is required to authen
 
 ## Activity Logs
 
-In addition to enforcing policy, the Gatekeeper extension also writes out activity logs for all Live Share sessions, which allows you to view and audit the collaboration details that occur within your organization. These logs are written as [JSON lines](http://jsonlines.org/) files to the `$TMPDIR/VSLiveShareActivityLogs` directory, on the machine of the hosting developer (the person who shared their workspace). The following events are will be automatically captured as part of these activity logs:
+In addition to enforcing policy, the Gatekeeper extension also writes out activity logs for all Live Share sessions, which allows you to view and audit the collaboration details that occur within your organization. These logs are written as [JSON lines](http://jsonlines.org/) files to the `$TMPDIR/VSLiveShareActivityLogs` directory (or `%TMP%\VSLiveShareActivityLogs` on Windows), on the machine of the hosting developer (the person who shared their workspace). The following events are will be automatically captured as part of these activity logs:
 
 - Session started/ended/joined
 - Guest joined/left

@@ -1,3 +1,7 @@
+## v0.0.7 (09/19/2020)
+
+- The `LIVESHARE_POLICY_FILE` environment variable can now point to an `http`/`https`-based URL
+
 ## v0.0.6 (09/04/2020)
 
 - Added support for the `LIVESHARE_POLICY_FILE` environment variable

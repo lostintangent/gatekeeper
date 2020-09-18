@@ -3,6 +3,7 @@ import * as os from "os";
 import * as path from "path";
 import * as vscode from "vscode";
 import * as vsls from "vsls";
+import fetch from "node-fetch";
 import { onPropertyChanged } from "./utils";
 
 const EXTENSION_NAME = "gatekeeper";
@@ -29,9 +30,7 @@ function createPolicy(
 }
 
 class GatekeeperPolicyProvider implements vsls.PolicyProvider {
-  private _policyConfig: PolicyConfig | undefined;
-
-  constructor(private api: vsls.LiveShare) {}
+  constructor(private api: vsls.LiveShare, private config: PolicyConfig) {}
 
   providePolicies(): vsls.Policy[] {
     const policies = [
@@ -51,9 +50,8 @@ class GatekeeperPolicyProvider implements vsls.PolicyProvider {
   }
 
   private getAllowedDomains(): string[] {
-    const config = this.getPolicyConfig();
-    if (config.allowedDomains) {
-      return config.allowedDomains;
+    if (this.config.allowedDomains) {
+      return this.config.allowedDomains;
     }
 
     const allowedDomains = vscode.workspace
@@ -71,30 +69,33 @@ class GatekeeperPolicyProvider implements vsls.PolicyProvider {
   }
 
   private getConnectionMode(): string | undefined {
-    const config = this.getPolicyConfig();
-    return config.connectionMode;
+    return this.config.connectionMode;
+  }
+}
+
+let policyConfig: PolicyConfig;
+async function getPolicyConfig(): Promise<PolicyConfig> {
+  if (policyConfig) {
+    return policyConfig;
   }
 
-  private getPolicyConfig(): PolicyConfig {
-    if (this._policyConfig) {
-      return this._policyConfig;
-    }
+  const filePath =
+    process.env[POLICY_FILE_ENV_VAR] || path.join(os.homedir(), POLICY_FILE);
 
-    const filePath =
-      process.env[POLICY_FILE_ENV_VAR] || path.join(os.homedir(), POLICY_FILE);
-
-    if (fs.existsSync(filePath)) {
+  try {
+    if (filePath.startsWith("http")) {
+      const response = await fetch(filePath);
+      policyConfig = await response.json();
+    } else if (fs.existsSync(filePath)) {
       const contents = fs.readFileSync(filePath, "utf8");
-
-      try {
-        this._policyConfig = JSON.parse(contents);
-      } catch {
-        // The policy file isn't valid JSON.
-      }
+      policyConfig = JSON.parse(contents);
     }
-
-    return this._policyConfig || ({} as PolicyConfig);
+  } catch {
+    // The config may have been invalid JSON
+    // and so we simply ignore it and move on.
   }
+
+  return policyConfig || ({} as PolicyConfig);
 }
 
 let policyProviderHandler: vscode.Disposable | null;
@@ -115,7 +116,8 @@ export async function registerPolicyProvider(api: vsls.LiveShare) {
       refreshPolicies(api)
     );
 
-    policyProvider = new GatekeeperPolicyProvider(api);
+    const config = await getPolicyConfig();
+    policyProvider = new GatekeeperPolicyProvider(api, config);
     policyProviderHandler = await api.registerPolicyProvider(
       POLICY_PROVIDER_NAME,
       policyProvider

@@ -61,7 +61,7 @@ class GatekeeperPolicyProvider implements vsls.PolicyProvider {
     if (allowedDomains.length > 0) {
       return allowedDomains;
     } else if (this.api.session.user && this.api.session.user.emailAddress) {
-      const domain = this.api.session.user.emailAddress.split("@")[1];
+      const domain = this.getCurrentUserDomain();
       return [domain];
     }
 
@@ -70,6 +70,23 @@ class GatekeeperPolicyProvider implements vsls.PolicyProvider {
 
   private getConnectionMode(): string | undefined {
     return this.config.connectionMode;
+  }
+
+  private getCurrentUserDomain() {
+    return this.api.session.user?.emailAddress?.split("@")[1] || "";
+  }
+
+  public ensureSessionIsAllowed() {
+    const domain = this.getCurrentUserDomain();
+    if (!this.getAllowedDomains().includes(domain)) {
+      this.api.end();
+
+      vscode.window.showErrorMessage(
+        "In order to start a Live Share session, you need to be logged in with one of the following allowed domains: " +
+          this.getAllowedDomains().join(",") +
+          "."
+      );
+    }
   }
 }
 
@@ -130,6 +147,12 @@ export async function registerPolicyProvider(api: vsls.LiveShare) {
         )
       ) {
         refreshPolicies(api);
+      }
+    });
+
+    api.onDidChangeSession((e) => {
+      if (e.session && policyProvider) {
+        policyProvider.ensureSessionIsAllowed();
       }
     });
   }

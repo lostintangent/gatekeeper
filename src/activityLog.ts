@@ -1,16 +1,19 @@
-import * as os from "os";
 import * as path from "path";
 import * as vsls from "vsls";
 import OutputFile from "./outputFile";
 
 const LOG_FILE = "ActivityLog.jsonl";
-const LOG_DIRECTORY = "VSLiveShareActivityLogs";
+const LOG_DIRECTORY = "ActivityLogs";
 
 class ActivityLog {
-  private outputFile = new OutputFile(
-    LOG_FILE,
-    path.join(os.tmpdir(), LOG_DIRECTORY)
-  );
+  private outputFile: OutputFile;
+
+  constructor(logPath: string) {
+    this.outputFile = new OutputFile(
+      LOG_FILE,
+      path.join(logPath, LOG_DIRECTORY)
+    );
+  }
 
   public async openAsync(): Promise<void> {
     await this.outputFile.openAsync();
@@ -21,9 +24,12 @@ class ActivityLog {
   }
 }
 
-export async function registerActivityLog(api: vsls.LiveShare) {
+export async function registerActivityLog(
+  api: vsls.LiveShare,
+  logPath: string
+) {
   if (api.onActivity) {
-    const activityLog = new ActivityLog();
+    const activityLog = new ActivityLog(logPath);
     await activityLog.openAsync();
 
     api.onActivity(activityLog.log.bind(activityLog));

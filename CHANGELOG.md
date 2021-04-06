@@ -1,3 +1,7 @@
+## v0.0.8 (04/06/2021)
+
+- Updated the default log path to use the VS Code log path for Live Share Gatekeeper
+
 ## v0.0.7 (09/19/2020)
 
 - The `LIVESHARE_POLICY_FILE` environment variable can now point to an `http`/`https`-based URL

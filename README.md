@@ -45,7 +45,15 @@ When a set of allowed domains is configured, then the host is required to authen
 
 ## Activity Logs
 
-In addition to enforcing policy, the Gatekeeper extension also writes out activity logs for all Live Share sessions, which allows you to view and audit the collaboration details that occur within your organization. These logs are written as [JSON lines](http://jsonlines.org/) files to the `$TMPDIR/VSLiveShareActivityLogs` directory (or `%TMP%\VSLiveShareActivityLogs` on Windows), on the machine of the hosting developer (the person who shared their workspace). The following events are will be automatically captured as part of these activity logs:
+In addition to enforcing policy, the Gatekeeper extension also writes out activity logs for all Live Share sessions, which allows you to view and audit the collaboration details that occur within your organization. These logs are written as [JSON lines](http://jsonlines.org/) files on the machine of the hosting developer (the person who shared their workspace), and can be found in the following directory (depending on the OS):
+
+- Linux: `$HOME/.vscode/data/User/globalStorage/vsls-contrib.gatekeeper/ActivityLogs`
+- macOS: `$HOME/Library/Application Support/Code/User/globalStorage/vsls-contrib.gatekeeper/ActivityLogs`
+- Windows -
+
+> Note: If a developer is using VS Code Insiders, then replace the `.vscode` or `Code` directories `ith `.vscode-insiders`and`Code - Insiders` respectively.
+
+The following events are will be automatically captured as part of these activity logs:
 
 - Session started/ended/joined
 - Guest joined/left

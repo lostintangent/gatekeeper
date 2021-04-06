@@ -6,6 +6,6 @@ import { registerPolicyProvider } from "./policyProvider";
 export async function activate(context: vscode.ExtensionContext) {
   const api = (await vsls.getApi())!;
 
-  registerActivityLog(api);
+  registerActivityLog(api, context.globalStoragePath);
   registerPolicyProvider(api);
 }

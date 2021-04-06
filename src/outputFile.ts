@@ -13,7 +13,7 @@ export default class OutputFile {
 
   public async openAsync(): Promise<string | undefined> {
     try {
-      await fs.mkdir(this.directory);
+      await fs.mkdir(this.directory, { recursive: true });
     } catch (e) {}
     return await this.openFileAsync();
   }

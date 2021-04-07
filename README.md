@@ -49,7 +49,6 @@ In addition to enforcing policy, the Gatekeeper extension also writes out activi
 
 - Linux: `$HOME/.vscode/data/User/globalStorage/vsls-contrib.gatekeeper/ActivityLogs`
 - macOS: `$HOME/Library/Application Support/Code/User/globalStorage/vsls-contrib.gatekeeper/ActivityLogs`
-- Windows -
 
 > Note: If a developer is using VS Code Insiders, then replace the `.vscode` or `Code` directories `ith `.vscode-insiders`and`Code - Insiders` respectively.
 

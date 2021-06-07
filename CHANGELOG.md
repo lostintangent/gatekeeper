@@ -1,3 +1,7 @@
+## v0.0.9 (06/07/2021)
+
+- Addeds the Windows activity log path to the `README`
+
 ## v0.0.8 (04/06/2021)
 
 - Updated the default log path to use the VS Code log path for Live Share Gatekeeper

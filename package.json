@@ -57,7 +57,7 @@
     "vscode": "^1.1.25"
   },
   "dependencies": {
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^2.6.7",
     "vsls": "^1.0.2590"
   }
 }
